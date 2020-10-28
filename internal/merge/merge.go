@@ -63,37 +63,56 @@ func (m *JSONMerge) typeDetect(input interface{}) detectType {
 }
 
 func (m *JSONMerge) mergeARRAY(dst []interface{}, src []interface{}) []interface{} {
-	var result []interface{}
+	var test []interface{}
 	if len(src) > len(dst) {
-		result = make([]interface{}, len(src))
+		test = make([]interface{}, len(src))
 	} else {
-		result = make([]interface{}, len(dst))
+		test = make([]interface{}, len(dst))
 	}
 
 	for i := range dst {
-		result[i] = dst[i]
+		test[i] = dst[i]
 	}
 
 	for i := range src {
-		result[i] = src[i]
+		test[i] = src[i]
 	}
+
+	var result []interface{}
+	for i := range test {
+		if test[i] != nil {
+			result = append(result, test[i])
+		}
+	}
+
+	test = nil
 
 	return result
 }
 
 func (m *JSONMerge) mergeMAP(dst map[string]interface{}, src map[string]interface{}) map[string]interface{} {
-	result := dst
+	result := make(map[string]interface{})
+	for i := range dst {
+		if dst[i] != nil {
+			result[i] = dst[i]
+		}
+	}
 
+	var test interface{}
 	for i := range src {
 		if _, ok := result[i]; !ok || m.typeDetect(result[i]) == noneType {
-			if result == nil {
-				result = make(map[string]interface{})
+			if src[i] != nil {
+				result[i] = src[i]
+			} else {
+				delete(result, i)
 			}
-			result[i] = src[i]
 			continue
 		}
 
-		result[i], _ = m.Merge(result[i], src[i])
+		test, _ = m.Merge(result[i], src[i])
+		if src[i] != nil {
+			result[i] = test
+		}
 	}
 
 	return result

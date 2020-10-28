@@ -208,6 +208,12 @@ func Test_JSON(t *testing.T) {
 			`test2`: map[string]interface{}{
 				`test2-2`: `test2-2`,
 			},
+			`test3`: map[string]interface{}{
+				`test3-0`: nil,
+				`test3-1`: `test3-1`,
+				`test3-2`: `test3-2`,
+				`test3-3`: `test3-3`,
+			},
 		}
 		srcMAP = map[string]interface{}{
 			`test`: `testSRC`,
@@ -219,6 +225,9 @@ func Test_JSON(t *testing.T) {
 					`test2-2`,
 				},
 			},
+			`test3`: map[string]interface{}{
+				`test3-2`: nil,
+			},
 		}
 		resultMAP, check = j.Merge(dstMAP, srcMAP)
 		assert.Equal(t, check, true)
@@ -229,6 +238,10 @@ func Test_JSON(t *testing.T) {
 				`test2-2`: []interface{}{
 					`test2-2`,
 				},
+			},
+			`test3`: map[string]interface{}{
+				`test3-1`: `test3-1`,
+				`test3-3`: `test3-3`,
 			},
 			`testSRC`: []interface{}{
 				`SRC1`,
